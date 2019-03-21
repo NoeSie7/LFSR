@@ -3,7 +3,7 @@ package lfsr;
 import java.util.ArrayList;
 import java.util.Random;
 
-public class Snow3G {
+public class Lfsr {
 
     private ArrayList<Integer> lfsr1; // 19 bits de tamanio
     private ArrayList<Integer> lfsr2; // 22 bits
@@ -11,14 +11,14 @@ public class Snow3G {
     private ArrayList<Integer> aux;
     private Random rand;
 
-    public Snow3G() {
+    public Lfsr() {
         this.lfsr1 = null;
         this.lfsr2 = null;
         this.lfsr3 = null;
         this.rand = null;
     }
 
-    public Snow3G(String cad_entrada) {
+    public Lfsr(String cad_entrada) {
         this.rand = new Random();
 
         this.lfsr1 = new ArrayList<>();
