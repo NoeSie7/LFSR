@@ -35,10 +35,12 @@ public class Lfsr {
     }
 
     public void generarSemilla() {
+        System.out.println("SIZE" + this.lfsr1.size());
         for (int i = 0; i < 19; ++i) {
             final int n = this.rand.nextInt(2);
             this.lfsr1.add(n);
         }
+        System.out.println("SIZE" + this.lfsr1.size());
         for (int i = 0; i < 22; ++i) {
             final int n = this.rand.nextInt(2);
             this.lfsr2.add(n);
