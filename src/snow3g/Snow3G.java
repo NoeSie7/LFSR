@@ -27,8 +27,10 @@ public class Snow3G {
         // this.r3 = new ArrayList<>();
         this.generarSemilla();
         final int n = this.xor();
+        System.out.println("Mostrando vector \n");
+        this.mostrar();
         this.feedback(n);
-        this.sBoxes();
+        // this.sBoxes();
     }
 
     public void generarSemilla() {
@@ -55,19 +57,24 @@ public class Snow3G {
     public void feedback(int num) {
         System.out.println("FEEDBACK" + num);
         int aux;
-        int aux1 = num;
+        int aux1;
 
         // this.mostrar();
 
-        for (int i = 0; i < this.lfsr.size(); i++) {
-            System.out.println("ITER:" + i);
-            aux = this.lfsr.get(i);
-            this.lfsr.set(i, aux1);
-            aux1 = this.lfsr.get(i + 1);
-            this.lfsr.set(i + 1, aux);
-            aux = aux1;
-            System.out.println("AUX: " + aux + "AUX1" + aux1);
-            this.mostrar();
+        for (int i = 0; i < this.lfsr.size() - 1; i++) {
+        	System.out.println("i: "+ i);
+        	aux = this.lfsr.get(i);
+        	this.lfsr.set(i, num);
+        	aux1 = this.lfsr.get(i+1);
+        	this.lfsr.set(i+1, aux);
+        	num = aux1;
+        	// int i1 = i + 1;
+//        	aux = this.lfsr.get(i);
+//        	this.lfsr.set(i, num);
+//        	aux1 = this.lfsr.get(i+1);
+//        	this.lfsr.set(i+1, aux);
+//        	num = aux1;
+           this.mostrar();
         }
     }
 
@@ -123,7 +130,7 @@ public class Snow3G {
     }
 
     public void mostrar() {
-        System.out.println("\n Array1 \n" + "Size:" + this.lfsr.size());
+        System.out.println("\n Mosstrar \n");
         for (int i = 0; i < this.lfsr.size(); ++i) {
             System.out.println("Pos: [" + i + "] ->" + this.lfsr.get(i));
         }
