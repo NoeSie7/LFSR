@@ -22,9 +22,6 @@ public class Snow3G {
     public Snow3G(String aux) {
         this.rand = new Random();
         this.lfsr = new ArrayList<>();
-        // this.r1 = new ArrayList<>();
-        // this.r2 = new ArrayList<>();
-        // this.r3 = new ArrayList<>();
         this.generarSemilla();
         final int n = this.xor();
         System.out.println("Mostrando vector \n");
@@ -35,9 +32,9 @@ public class Snow3G {
 
     public void generarSemilla() {
         for (int i = 0; i < 6; i++) {
-            final int n = this.rand.nextInt(2);
-            // System.out.println("valor rand" + n);
-            this.lfsr.add(n);
+//            final int n = this.rand.nextInt(2);
+//            this.lfsr.add(n);
+        	this.lfsr.add(i);
         }
     }
 
@@ -57,24 +54,26 @@ public class Snow3G {
     public void feedback(int num) {
         System.out.println("FEEDBACK" + num);
         int aux;
-        int aux1;
-
-        // this.mostrar();
-
+        int aux1 = num;
+        int i1 = 0;
         for (int i = 0; i < this.lfsr.size() - 1; i++) {
-        	System.out.println("i: "+ i);
+        	System.out.println("\nI: "+ i); /////////////////////////////////////////////////////////
+        	i1 = i + 1;
+        	
+        	System.out.println("Actual: " + this.lfsr.get(i));/////////////////////////////////////////////////////////
+        	// if(i == 0)
         	aux = this.lfsr.get(i);
-        	this.lfsr.set(i, num);
-        	aux1 = this.lfsr.get(i+1);
-        	this.lfsr.set(i+1, aux);
-        	num = aux1;
-        	// int i1 = i + 1;
-//        	aux = this.lfsr.get(i);
-//        	this.lfsr.set(i, num);
-//        	aux1 = this.lfsr.get(i+1);
-//        	this.lfsr.set(i+1, aux);
-//        	num = aux1;
-           this.mostrar();
+        	// aux = aux1;
+        	System.out.println("AUX (i): " + aux);/////////////////////////////////////////////////////////
+          	this.lfsr.set(i, aux1);      	
+        	aux1 = this.lfsr.get(i1);
+        	System.out.println("AUX1(i+1) :" + aux1);/////////////////////////////////////////////////////////
+        	this.lfsr.set(i1, aux);
+
+//        	if(i > 0)
+//        	this.lfsr.set(i1, this.lfsr.get(i));
+//        	System.out.println("AUX: "+ aux + "AUX1: " + aux1 + "POS ACTUAL: " + this.lfsr.get(i));
+        	this.mostrar();
         }
     }
 
