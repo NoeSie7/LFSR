@@ -5,14 +5,19 @@ import java.util.Random;
 
 public class Snow3G {
 
-    private ArrayList<Integer> lfsr;
+	private ArrayList<ArrayList<Integer>> lfsr1; // array con los 32 bits del LFSR
+    private ArrayList<Integer> lfsr;// Longitud 16 del LFSR y cada elemento 32 bits
     private ArrayList<Integer> r1;
     private ArrayList<Integer> r2;
     private ArrayList<Integer> r3;
+   // private char SR[];
+    final int SIZE_LFSR = 16;
+    final int SIZE_R = 32;
     private Random rand;
 
     public Snow3G() {
         this.lfsr = null;
+        this.lfsr1 = null;
         this.rand = null;
         this.r1 = null;
         this.r2 = null;
@@ -20,61 +25,106 @@ public class Snow3G {
     }
 
     public Snow3G(String aux) {
+    	
+    	//Semilla aleatoria
         this.rand = new Random();
-        this.lfsr = new ArrayList<>();
-        this.generarSemilla();
+        
+        //LFSR
+        this.lfsr = new ArrayList<>();//32 bits
+        this.lfsr1 = new ArrayList<ArrayList<Integer>>(16);// 16 bits
+        //Generamos R Box
+        this.r1 = new ArrayList<>();
+        this.r2 = new ArrayList<>();
+        this.r3 = new ArrayList<>();
+        
+        // Generamos semillas de R y LFSR
+        this.generarSemilla(this.lfsr1);
+        this.generarSemillaR();
+        this.mostrarR(this.r1);
+        this.mostrarR(this.r2);
+        this.mostrarR(this.r3);
+
+  
         final int n = this.xor();
-        System.out.println("Mostrando vector \n");
-        this.mostrar();
         this.feedback(n);
-        // this.sBoxes();
+        
+        // Creamos SBoxes
+        this.sBoxes();
+        
     }
 
-    public void generarSemilla() {
-        for (int i = 0; i < 6; i++) {
+    public void generarSemillaR(){
+    	System.out.println("Entramos R");
+    	for (int i = 0; i < SIZE_R ; i++) {
+	      // final int n = this.rand.nextInt(2);
+	      this.r1.add(numeroAleatorio());
+	      this.r2.add(numeroAleatorio());
+	      this.r3.add(numeroAleatorio());
+      	}
+    }
+    
+    public int numeroAleatorio() {
+    	final int n = this.rand.nextInt(2);
+    	return n;
+    }
+    
+    public void generarSemilla(ArrayList<ArrayList<Integer>> p) {
+    	System.out.println("LLEGA");
+//        for (int i = 0; i < 32 ; i++) {
 //            final int n = this.rand.nextInt(2);
 //            this.lfsr.add(n);
-        	this.lfsr.add(i);
-        }
+//        }
+       
+       for (int i = 0; i < SIZE_LFSR ; i++) {				// Añadimos al LFSR
+    	   this.lfsr = new ArrayList<Integer>();
+    	   for (int j = 0; j < 32 ; j++) {                      // Generamos por cada posicion del lfsr un array de 32 bits
+               final int n = this.rand.nextInt(2);
+               this.lfsr.add(n);
+           }
+    	   p.add(this.lfsr);
+       }
+//       System.out.println("Primer elemento" + p.get(0).get(0) + p.get(1).get(1));
+       System.out.println("Mostrando la semilla generada");
+        this.mostrarLFSR(p);
     }
 
     public void generarFsm() {
-        for (int i = 0; i < 32; i++) {
+        for (int i = 0; i < SIZE_R; i++) {
             this.r1.add(i);
         }
     }
 
     public int xor() {
         System.out.println("\n Xor \n");
-        final int xorlfsr = this.lfsr.get(0) ^ this.lfsr.get(2) ^ this.lfsr.get(3) ^ this.lfsr.get(5);
+        int xorlfsr = -1;
+        // final int xorlfsr = this.lfsr.get(0) ^ this.lfsr.get(2) ^ this.lfsr.get(3) ^ this.lfsr.get(5);
+        for (int i = 0; i < this.lfsr1.size(); i++) {
+			xorlfsr = this.lfsr1.get(0).get(i) ^ this.lfsr1.get(2).get(i) ^ this.lfsr1.get(3).get(i) ^ this.lfsr1.get(5).get(i);
+		}
         System.out.println("XOR:" + xorlfsr);
         return xorlfsr;
     }
 
     public void feedback(int num) {
         System.out.println("FEEDBACK" + num);
-        int aux;
-        int aux1 = num;
-        int i1 = 0;
-        for (int i = 0; i < this.lfsr.size() - 1; i++) {
-        	System.out.println("\nI: "+ i); /////////////////////////////////////////////////////////
-        	i1 = i + 1;
-        	
-        	System.out.println("Actual: " + this.lfsr.get(i));/////////////////////////////////////////////////////////
-        	// if(i == 0)
-        	aux = this.lfsr.get(i);
-        	// aux = aux1;
-        	System.out.println("AUX (i): " + aux);/////////////////////////////////////////////////////////
-          	this.lfsr.set(i, aux1);      	
-        	aux1 = this.lfsr.get(i1);
-        	System.out.println("AUX1(i+1) :" + aux1);/////////////////////////////////////////////////////////
-        	this.lfsr.set(i1, aux);
-
-//        	if(i > 0)
-//        	this.lfsr.set(i1, this.lfsr.get(i));
-//        	System.out.println("AUX: "+ aux + "AUX1: " + aux1 + "POS ACTUAL: " + this.lfsr.get(i));
-        	this.mostrar();
-        }
+        int aux, aux1;
+//        aux = this.lfsr.get(0);
+//        for(int i = 0 ; i < this.lfsr.size() - 1; ++i) {
+//        	aux1 = this.lfsr.get(i + 1);
+//        	this.lfsr.set(i + 1, aux);
+//        	// System.out.println("AUX: " + aux + " UAX1: "+ aux1);
+//        	aux = aux1;
+//        }
+//        this.lfsr.set(0, num);
+        aux = this.lfsr1.get(0).get(0);
+        for (int i = 0; i < this.lfsr1.size(); i++) { 
+            for (int j = 0; j < this.lfsr1.get(i).size() - 1; j++) { 
+                aux1 = this.lfsr1.get(i).get(j + 1);
+                this.lfsr1.get(i).set(j + 1, aux);
+                aux = aux1;
+            }  
+        } 
+        this.lfsr1.get(0).set(0, num);
     }
 
     public void fsm() {
@@ -84,7 +134,8 @@ public class Snow3G {
 
     public void sBoxes() {
         System.out.println("Entro SBOX");
-        final char SR[] = { 0x63, 0x7C, 0x77, 0x7B, 0xF2, 0x6B, 0x6F, 0xC5, 0x30, 0x01, 0x67, 0x2B, 0xFE, 0xD7, 0xAB,
+//        final char SR[] = { 0x63, 0x7C, 0x77, 0x7B, 0xF2, 0x6B, 0x6F, 0xC5, 0x30, 0x01, 0x67, 0x2B, 0xFE, 0xD7, 0xAB,
+         final char SR[] = { 0x63, 0x7C, 0x77, 0x7B, 0xF2, 0x6B, 0x6F, 0xC5, 0x30, 0x01, 0x67, 0x2B, 0xFE, 0xD7, 0xAB,
                 0x76, 0xCA, 0x82, 0xC9, 0x7D, 0xFA, 0x59, 0x47, 0xF0, 0xAD, 0xD4, 0xA2, 0xAF, 0x9C, 0xA4, 0x72, 0xC0,
                 0xB7, 0xFD, 0x93, 0x26, 0x36, 0x3F, 0xF7, 0xCC, 0x34, 0xA5, 0xE5, 0xF1, 0x71, 0xD8, 0x31, 0x15, 0x04,
                 0xC7, 0x23, 0xC3, 0x18, 0x96, 0x05, 0x9A, 0x07, 0x12, 0x80, 0xE2, 0xEB, 0x27, 0xB2, 0x75, 0x09, 0x83,
@@ -128,11 +179,26 @@ public class Snow3G {
         }
     }
 
-    public void mostrar() {
+    public void mostrarLFSR(ArrayList <ArrayList<Integer>> vec) {
         System.out.println("\n Mosstrar \n");
-        for (int i = 0; i < this.lfsr.size(); ++i) {
-            System.out.println("Pos: [" + i + "] ->" + this.lfsr.get(i));
-        }
+//        for (int i = 0; i < vec.size(); ++i) {
+//            System.out.println("Pos: [" + i + "] ->" + vec.get(i));
+//        }
+        for (int i = 0; i < vec.size(); i++) { 
+            for (int j = 0; j < vec.get(i).size(); j++) { 
+                System.out.print(vec.get(i).get(j) + " "); 
+            } 
+            System.out.println(); 
+        } 
+
+    }
+    
+    public void mostrarR(ArrayList<Integer> r){
+    	System.out.println("\n Mostrar R \n");
+    	for (int i = 0; i < r.size(); i++) {
+			System.out.println("POS: [" + i + "] -> " + r.get(i));
+		}
+    	System.out.println("");
     }
 
 }

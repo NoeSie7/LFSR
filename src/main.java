@@ -10,7 +10,7 @@ public class main {
         // alg.mostrar();
 
         final Snow3G alg1 = new Snow3G(hola);
-        alg1.mostrar();
+        // alg1.mostrar();
     }
 
 }
